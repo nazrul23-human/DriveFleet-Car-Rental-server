@@ -30,9 +30,25 @@ const client = new MongoClient(uri, {
 });
 
 // MongoDB Connection
+
 async function run() {
   try {
     await client.connect();
+
+    const carsCollection = client
+      .db("driveFleetDB")
+      .collection("cars");
+
+    app.get("/cars", async (req, res) => {
+      const result = await carsCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/cars", async (req, res) => {
+      const car = req.body;
+      const result = await carsCollection.insertOne(car);
+      res.send(result);
+    });
 
     console.log("MongoDB Connected Successfully");
   } catch (error) {
